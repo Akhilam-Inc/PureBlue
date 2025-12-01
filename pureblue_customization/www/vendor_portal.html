@@ -1,0 +1,715 @@
+{% extends "templates/web.html" %}
+
+{% block page_content %}
+<style>
+  :root {
+    --primary: #2490ef;
+    --primary-hover: #1a7ad6;
+    --text-dark: #1f272e;
+    --text-muted: #6c7680;
+    --border: #e3e8ee;
+    --bg-light: #f7f9fc;
+    --bg-white: #ffffff;
+    --success: #48bb74;
+    --danger: #f56b6b;
+  }
+
+  body {
+    background-color: var(--bg-light);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  .vendor-registration-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 20px;
+  }
+
+  .page-header {
+    margin-bottom: 32px;
+  }
+
+  .page-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 0;
+  }
+
+  .page-subtitle {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  .form-section {
+    background: var(--bg-white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    color: var(--primary);
+  }
+
+  .section-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 0;
+  }
+
+  .form-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-dark);
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .required-indicator {
+    color: var(--danger);
+    margin-left: 2px;
+  }
+
+  .form-control, .form-select {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background-color: var(--bg-white);
+    color: var(--text-dark);
+    transition: all 0.2s ease;
+  }
+
+  .form-control[type="file"] {
+    padding: 6px 12px;
+    cursor: pointer;
+    height: auto;
+  }
+
+  .form-control[type="file"]::-webkit-file-upload-button {
+    padding: 6px 12px;
+    margin-right: 12px;
+    background-color: var(--bg-light);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-dark);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .form-control[type="file"]::-webkit-file-upload-button:hover {
+    background-color: var(--border);
+  }
+
+  .form-control:focus, .form-select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(36, 144, 239, 0.1);
+  }
+
+  .form-control::placeholder {
+    color: #a8b4c0;
+  }
+
+  .address-card {
+    background: var(--bg-light);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+  }
+
+  .address-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+  }
+
+  .address-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    color: var(--primary);
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    justify-content: flex-start;
+  }
+
+  .btn {
+    padding: 9px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-primary {
+    background-color: var(--primary);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(36, 144, 239, 0.3);
+  }
+
+  .btn-primary:active {
+    transform: translateY(0);
+  }
+
+  .btn-secondary {
+    background-color: white;
+    color: var(--text-dark);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover {
+    background-color: var(--bg-light);
+    border-color: #d1d8dd;
+  }
+
+  .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .alert {
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: slideDown 0.3s ease;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .alert-success {
+    background-color: #e8f7ed;
+    color: #2d7a4f;
+    border: 1px solid #c3e8d1;
+  }
+
+  .alert-danger {
+    background-color: #fef0f0;
+    color: #c54444;
+    border: 1px solid #fcd4d4;
+  }
+
+  .alert-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  .d-none {
+    display: none !important;
+  }
+
+  .mb-3 {
+    margin-bottom: 16px;
+  }
+
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -8px;
+  }
+
+  .col-md-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+    padding: 0 8px;
+  }
+
+  .col-md-12 {
+    flex: 0 0 100%;
+    max-width: 100%;
+    padding: 0 8px;
+  }
+
+  @media (max-width: 768px) {
+    .col-md-6 {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+
+    .col-md-12 {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+
+    .vendor-registration-container {
+      margin: 20px auto;
+    }
+
+    .form-section {
+      padding: 20px;
+    }
+  }
+
+  /* Loading Spinner */
+  .btn-loading {
+    position: relative;
+    color: transparent;
+    pointer-events: none;
+  }
+
+  .btn-loading::after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    margin-left: -8px;
+    margin-top: -8px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+</style>
+
+<div class="vendor-registration-container">
+  <div class="page-header">
+    <h1 class="page-title">Vendor Registration</h1>
+    <p class="page-subtitle">Please fill in the details below to register as a vendor</p>
+  </div>
+
+  <div id="response-message" class="alert d-none"></div>
+
+  <form id="vendor-form">
+    <!-- Basic Information Section -->
+    <div class="form-section">
+      <div class="section-header">
+        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+        <h2 class="section-title">Basic Information</h2>
+      </div>
+      
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="supplier_name" class="form-label">
+            Supplier Name <span class="required-indicator">*</span>
+          </label>
+          <input type="text" id="supplier_name" name="supplier_name" class="form-control" required placeholder="Enter supplier name">
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label for="supplier_group" class="form-label">Supplier Group</label>
+          <input type="text" id="supplier_group" name="supplier_group" class="form-control" placeholder="All Supplier Groups">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="supplier_type" class="form-label">Supplier Type</label>
+          <select id="supplier_type" name="supplier_type" class="form-select">
+            <option value="Company">Company</option>
+            <option value="Individual">Individual</option>
+          </select>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label for="tax_id" class="form-label">Tax ID / GSTIN</label>
+          <input type="text" id="tax_id" name="tax_id" class="form-control" placeholder="Enter GSTIN">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="licence_no" class="form-label">Licence No</label>
+          <input type="text" id="licence_no" name="licence_no" class="form-control" placeholder="Enter licence number">
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label for="licence_expiry" class="form-label">Licence Expiry</label>
+          <input type="date" id="licence_expiry" name="licence_expiry" class="form-control">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12 mb-3">
+          <label for="document_file" class="form-label">Attach Document</label>
+          <input type="file" id="document_file" name="document_file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+          <small class="form-text text-muted" style="font-size: 12px; color: var(--text-muted); margin-top: 4px; display: block;">
+            Supported formats: PDF, JPG, PNG, DOC, DOCX (Max 5MB)
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Information Section -->
+    <div class="form-section">
+      <div class="section-header">
+        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+        </svg>
+        <h2 class="section-title">Contact Information</h2>
+      </div>
+      
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="email" class="form-label">
+            Email <span class="required-indicator">*</span>
+          </label>
+          <input type="email" id="email" name="email" class="form-control" required placeholder="email@example.com">
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label for="phone" class="form-label">Phone</label>
+          <input type="text" id="phone" name="phone" class="form-control" placeholder="+91 12345 67890">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="mobile" class="form-label">Mobile</label>
+          <input type="text" id="mobile" name="mobile" class="form-control" placeholder="+91 98765 43210">
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label for="website" class="form-label">Website</label>
+          <input type="text" id="website" name="website" class="form-control" placeholder="https://example.com">
+        </div>
+      </div>
+    </div>
+
+    <!-- Address Section -->
+    <div class="form-section">
+      <div class="section-header">
+        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+        <h2 class="section-title">Address Details</h2>
+      </div>
+      
+      <div class="address-card">
+        <div class="address-label">
+          <svg class="address-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+          Primary Address
+        </div>
+        
+        <div class="mb-3">
+          <label for="address_line1" class="form-label">Address Line 1</label>
+          <input type="text" id="address_line1" name="address_line1" class="form-control" placeholder="Street address">
+        </div>
+
+        <div class="mb-3">
+          <label for="address_line2" class="form-label">Address Line 2</label>
+          <input type="text" id="address_line2" name="address_line2" class="form-control" placeholder="Apartment, suite, etc.">
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="city" class="form-label">City</label>
+            <input type="text" id="city" name="city" class="form-control" placeholder="City">
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label for="state" class="form-label">State</label>
+            <input type="text" id="state" name="state" class="form-control" placeholder="State">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="pincode" class="form-label">PIN Code</label>
+            <input type="text" id="pincode" name="pincode" class="form-control" placeholder="123456">
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label for="country" class="form-label">Country</label>
+            <input type="text" id="country" name="country" class="form-control" value="India">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bank Details Section -->
+    <div class="form-section">
+      <div class="section-header">
+        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+          <line x1="1" y1="10" x2="23" y2="10"></line>
+        </svg>
+        <h2 class="section-title">Bank Details</h2>
+      </div>
+      
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="bank_name" class="form-label">Bank Name</label>
+          <input type="text" id="bank_name" name="bank_name" class="form-control" placeholder="e.g. HDFC Bank">
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label for="bank_account_no" class="form-label">Account Number</label>
+          <input type="text" id="bank_account_no" name="bank_account_no" class="form-control" placeholder="Enter account number">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="ifsc_code" class="form-label">IFSC Code</label>
+          <input type="text" id="ifsc_code" name="ifsc_code" class="form-control" style="text-transform: uppercase;" placeholder="HDFC0001234">
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label for="branch_name" class="form-label">Branch Name</label>
+          <input type="text" id="branch_name" name="branch_name" class="form-control" placeholder="Branch name">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="account_holder_name" class="form-label">Account Holder Name</label>
+          <input type="text" id="account_holder_name" name="account_holder_name" class="form-control" placeholder="As per bank records">
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label for="bank_account_type" class="form-label">Account Type</label>
+          <select id="bank_account_type" name="bank_account_type" class="form-select">
+            <option value="">Select account type</option>
+            <option value="Current">Current</option>
+            <option value="Savings">Savings</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary" id="submit-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        Submit
+      </button>
+      <button type="button" class="btn btn-secondary" id="cancel-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+        Cancel
+      </button>
+    </div>
+  </form>
+</div>
+
+<script>
+frappe.ready(function() {
+  // IFSC code to uppercase
+  $('#ifsc_code').on('input', function() {
+    this.value = this.value.toUpperCase();
+  });
+
+  // Cancel button - reset form
+  $('#cancel-btn').on('click', function() {
+    if (confirm('Are you sure you want to clear the form?')) {
+      $('#vendor-form')[0].reset();
+      $('#country').val('India');
+      $('#response-message').addClass('d-none');
+    }
+  });
+
+  $('#vendor-form').on('submit', function(e) {
+    e.preventDefault();
+
+    const submitBtn = $('#submit-btn');
+    const cancelBtn = $('#cancel-btn');
+    submitBtn.addClass('btn-loading').prop('disabled', true);
+    cancelBtn.prop('disabled', true);
+
+    // Prepare form data with file upload
+    let formData = new FormData();
+    
+    let data = {
+      supplier_name: $('#supplier_name').val(),
+      supplier_group: $('#supplier_group').val(),
+      supplier_type: $('#supplier_type').val(),
+      tax_id: $('#tax_id').val(),
+      licence_no: $('#licence_no').val(),
+      licence_expiry: $('#licence_expiry').val(),
+      email: $('#email').val(),
+      phone: $('#phone').val(),
+      mobile: $('#mobile').val(),
+      website: $('#website').val(),
+      address: {
+        address_line1: $('#address_line1').val(),
+        address_line2: $('#address_line2').val(),
+        city: $('#city').val(),
+        state: $('#state').val(),
+        pincode: $('#pincode').val(),
+        country: $('#country').val()
+      },
+      bank_details: {
+        bank_name: $('#bank_name').val(),
+        bank_account_no: $('#bank_account_no').val(),
+        ifsc_code: $('#ifsc_code').val(),
+        branch_name: $('#branch_name').val(),
+        account_holder_name: $('#account_holder_name').val(),
+        bank_account_type: $('#bank_account_type').val()
+      }
+    };
+
+    formData.append('data', JSON.stringify(data));
+    
+    // Add file if selected
+    const fileInput = document.getElementById('document_file');
+    if (fileInput.files.length > 0) {
+      const file = fileInput.files[0];
+      // Check file size (5MB limit)
+      if (file.size > 5 * 1024 * 1024) {
+        submitBtn.removeClass('btn-loading').prop('disabled', false);
+        cancelBtn.prop('disabled', false);
+        alert('File size should not exceed 5MB');
+        return;
+      }
+      formData.append('file', file);
+      formData.append('filename', file.name);
+    }
+
+    // Use XMLHttpRequest for file upload
+    const xhr = new XMLHttpRequest();
+    
+    xhr.open('POST', '/api/method/pureblue_customization.www.vendor_portal.create_supplier', true);
+    xhr.setRequestHeader('X-Frappe-CSRF-Token', frappe.csrf_token);
+    
+    xhr.onload = function() {
+      submitBtn.removeClass('btn-loading').prop('disabled', false);
+      cancelBtn.prop('disabled', false);
+      let msgDiv = $('#response-message');
+      
+      if (xhr.status === 200) {
+        try {
+          const response = JSON.parse(xhr.responseText);
+          if (response.message && response.message.message) {
+            msgDiv.removeClass('d-none alert-danger').addClass('alert-success');
+            msgDiv.html(`
+              <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>${response.message.message}</span>
+            `);
+            $('#vendor-form')[0].reset();
+            $('#country').val('India');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          } else {
+            msgDiv.removeClass('d-none alert-success').addClass('alert-danger');
+            msgDiv.html(`
+              <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="15" y1="9" x2="9" y2="15"></line>
+                <line x1="9" y1="9" x2="15" y2="15"></line>
+              </svg>
+              <span>Something went wrong. Please try again.</span>
+            `);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        } catch (e) {
+          msgDiv.removeClass('d-none alert-success').addClass('alert-danger');
+          msgDiv.html(`
+            <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <span>Error processing response. Please try again.</span>
+          `);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      } else {
+        msgDiv.removeClass('d-none alert-success').addClass('alert-danger');
+        let errorMsg = 'Server error. Please try again.';
+        try {
+          const errorResponse = JSON.parse(xhr.responseText);
+          if (errorResponse.exc || errorResponse._server_messages) {
+            errorMsg = errorResponse.exc || errorResponse._server_messages;
+          }
+        } catch (e) {}
+        msgDiv.html(`
+          <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span>${errorMsg}</span>
+        `);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    };
+    
+    xhr.onerror = function() {
+      submitBtn.removeClass('btn-loading').prop('disabled', false);
+      cancelBtn.prop('disabled', false);
+      let msgDiv = $('#response-message');
+      msgDiv.removeClass('d-none alert-success').addClass('alert-danger');
+      msgDiv.html(`
+        <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <span>Network error. Please check your connection and try again.</span>
+      `);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+    
+    xhr.send(formData);
+  });
+});
+</script>
+{% endblock %}
