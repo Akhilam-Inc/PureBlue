@@ -347,8 +347,40 @@
 
         <div class="col-md-6 mb-3">
           <label for="supplier_group" class="form-label">Supplier Group</label>
-          <input type="text" id="supplier_group" name="supplier_group" class="form-control" placeholder="All Supplier Groups">
+          <select id="supplier_group" name="supplier_group" class="form-select">
+            <option value="">Loading...</option>
+          </select>
         </div>
+
+        <script>
+        frappe.ready(function() {
+          frappe.call({
+            method: 'pureblue_customization.www.vendor_portal.get_supplier_groups', // adjust to your python method path
+            callback: function(r) {
+              const $sel = $('#supplier_group');
+              $sel.empty();
+              if (r.message && r.message.length) {
+                // support both array of strings or array of { value, label } objects
+                r.message.forEach(function(item) {
+                  if (typeof item === 'string') {
+                    $sel.append($('<option>').val(item).text(item));
+                  } else if (item && (item.value !== undefined || item.label !== undefined)) {
+                    $sel.append($('<option>').val(item.value || item.label).text(item.label || item.value));
+                  } else {
+                    $sel.append($('<option>').val(item).text(String(item)));
+                  }
+                });
+              } else {
+                $sel.append($('<option>').val('').text('All Supplier Groups'));
+              }
+            },
+            error: function() {
+              const $sel = $('#supplier_group');
+              $sel.empty().append($('<option>').val('').text('Failed to load groups'));
+            }
+          });
+        });
+        </script>
       </div>
 
       <div class="row">
@@ -357,6 +389,7 @@
           <select id="supplier_type" name="supplier_type" class="form-select">
             <option value="Company">Company</option>
             <option value="Individual">Individual</option>
+            <option value="Partnership">Partnership</option>
           </select>
         </div>
 
@@ -380,7 +413,7 @@
 
       <div class="row">
         <div class="col-md-12 mb-3">
-          <label for="document_file" class="form-label">Attach Document</label>
+          <label for="document_file" class="form-label">Attach Drug License Document <span class="required-indicator">*</span></label>
           <input type="file" id="document_file" name="document_file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
           <small class="form-text text-muted" style="font-size: 12px; color: var(--text-muted); margin-top: 4px; display: block;">
             Supported formats: PDF, JPG, PNG, DOC, DOCX (Max 5MB)
@@ -493,12 +526,39 @@
       <div class="row">
         <div class="col-md-6 mb-3">
           <label for="bank_name" class="form-label">Bank Name</label>
-          <input type="text" id="bank_name" name="bank_name" class="form-control" placeholder="e.g. HDFC Bank">
+          <select id="bank_name" name="bank_name" class="form-select">
+            <option value="">Loading...</option>
+          </select>
+          <script>
+            frappe.ready(function() {
+              frappe.call({
+                method: 'pureblue_customization.www.vendor_portal.get_banks', // adjust to your python method path
+                callback: function(r) {
+                  const $sel = $('#bank_name');
+                  $sel.empty();
+                  if (r.message && r.message.length) {
+                    r.message.forEach(function(item) {
+                      $sel.append($('<option>').val(item).text(item));
+                    });
+                  } else {
+                    $sel.append($('<option>').val('').text('No banks available'));
+                  }
+                },
+                error: function() {
+                  const $sel = $('#bank_name');
+                  $sel.empty().append($('<option>').val('').text('Failed to load banks'));
+                }
+                    });
+                });
+          </script>
         </div>
 
         <div class="col-md-6 mb-3">
           <label for="bank_account_no" class="form-label">Account Number</label>
-          <input type="text" id="bank_account_no" name="bank_account_no" class="form-control" placeholder="Enter account number">
+          <input type="text" id="bank_account_no" name="bank_account_no" class="form-control" placeholder="Enter account number" minlength="9" maxlength="14" required>
+          <small class="form-text text-muted" style="font-size: 12px; color: var(--text-muted); margin-top: 4px; display: block;">
+            Account number must be between 9 and 14 digits.
+          </small>
         </div>
       </div>
 

@@ -1,5 +1,6 @@
 import frappe
 from frappe import _
+from frappe.utils import getdate
 
 def get_context(context):
     context.title = "Vendor Registration"
@@ -9,29 +10,36 @@ def get_context(context):
 
 @frappe.whitelist(allow_guest=True)
 def create_supplier(data):
-    """Create Supplier record from public vendor registration form"""
     import json
     data = json.loads(data)
 
-    # Basic validation
-    if not data.get("supplier_name"):
-        frappe.throw(_("Supplier Name is required"))
-    if not data.get("email"):
-        frappe.throw(_("Email is required"))
+    # Basic Validation
+    required_fields = {
+        "supplier_name": "Supplier Name is required",
+        "email": "Email is required",
+        "licence_no": "Licence Number is required",
+        "licence_expiry": "Licence Expiry Date is required"
+    }
 
-    # Check duplicate
+    for key, msg in required_fields.items():
+        if not data.get(key):
+            frappe.throw(_(msg))
+
+    # Prevent duplicates
     if frappe.db.exists("Supplier", {"supplier_name": data["supplier_name"]}):
         frappe.throw(_("Supplier with this name already exists."))
 
-    try:
-        # Handle file upload (save temporarily)
-        file_url = None
-        if frappe.request.files:
-            file = frappe.request.files.get("file")
-            if file:
-                # Save file unattached first
-                file_url = save_uploaded_file(file)
+    file_url = None
 
+    # File Upload
+    if frappe.request.files:
+        file = frappe.request.files.get("file")
+        if not file:
+            frappe.throw(_("No file uploaded. Please attach the required document."))
+
+        file_url = save_uploaded_file(file)
+
+    try:
         # Create Supplier
         supplier = frappe.get_doc({
             "doctype": "Supplier",
@@ -40,33 +48,26 @@ def create_supplier(data):
             "supplier_type": data.get("supplier_type") or "Company",
             "tax_id": data.get("tax_id"),
             "website": data.get("website"),
+            "custom_licence_no": data.get("licence_no"),
+            "custom_licence_expiry": frappe.utils.getdate(data.get("licence_expiry")),
+            "custom_drug_license": file_url
         })
-
-        # Add custom fields if they exist in Supplier doctype
-        if data.get("licence_no"):
-            supplier.licence_no = data.get("licence_no")
-        if data.get("licence_expiry"):
-            supplier.licence_expiry = data.get("licence_expiry")
 
         supplier.insert(ignore_permissions=True)
 
-        # Attach file to Supplier if uploaded
-        if file_url:
-            attach_file_to_doc("Supplier", supplier.name, file_url)
-
-        # Create Contact for email and mobile
-        if data.get("email") or data.get("mobile") or data.get("phone"):
-            create_contact(supplier.name, data)
-
-        # Create Address if provided
+        # Address
         address_data = data.get("address", {})
         if address_data.get("address_line1") or address_data.get("city"):
             create_address(supplier.name, address_data)
 
-        # Create Bank Account if provided
+        # Contact
+        if data.get("email") or data.get("mobile") or data.get("phone"):
+            create_contact(supplier.name, data)
+
+        # Bank Account
         bank_data = data.get("bank_details", {})
-        if bank_data.get("bank_name") or bank_data.get("bank_account_no"):
-            create_bank_account(supplier.name, bank_data, data.get("supplier_name"))
+        if bank_data.get("bank_account_no"):
+            create_bank_account(supplier.name, bank_data, data["supplier_name"])
 
         frappe.db.commit()
 
@@ -76,8 +77,9 @@ def create_supplier(data):
         }
 
     except Exception:
-        frappe.log_error(frappe.get_traceback(), _("Supplier Registration Error"))
+        frappe.log_error(frappe.get_traceback(), "Supplier Registration Error")
         frappe.throw(_("An error occurred while registering. Please try again or contact support."))
+
 
 
 def create_address(supplier_name, address_data):
@@ -145,33 +147,13 @@ def create_contact(supplier_name, data):
 
 
 def create_bank_account(supplier_name, bank_data, supplier_display_name):
-    """Create Bank Account record for supplier"""
-    if not bank_data or not bank_data.get("bank_account_no"):
-        return
-
     try:
         bank_name = bank_data.get("bank_name")
-        account_type = bank_data.get("bank_account_type")
-
-        if bank_name and not frappe.db.exists("Bank", bank_name):
-            bank = frappe.get_doc({
-                "doctype": "Bank",
-                "bank_name": bank_name
-            })
-            bank.insert(ignore_permissions=True)
-            frappe.db.commit()
-
-        if account_type and not frappe.db.exists("Bank Account Type", account_type):
-            bank_acc_type = frappe.get_doc({
-                "doctype": "Bank Account Type",
-                "account_type": account_type
-            })
-            bank_acc_type.insert(ignore_permissions=True)
-            frappe.db.commit()
+        account_type = bank_data.get("bank_account_type") or "Savings"
 
         bank_account = frappe.get_doc({
             "doctype": "Bank Account",
-            "account_name": f"{supplier_display_name} - {bank_name or 'Bank'}",
+            "account_name": bank_data.get("account_holder_name") or supplier_display_name,
             "bank": bank_name,
             "bank_account_no": bank_data.get("bank_account_no"),
             "branch_code": bank_data.get("ifsc_code"),
@@ -181,9 +163,10 @@ def create_bank_account(supplier_name, bank_data, supplier_display_name):
             "party": supplier_name
         })
         bank_account.insert(ignore_permissions=True)
-        return bank_account.name
+
     except Exception:
-        frappe.log_error(frappe.get_traceback(), _("Bank Account Creation Error"))
+        frappe.log_error(frappe.get_traceback(), "Bank Account Creation Error")
+
 
 
 def save_uploaded_file(file):
@@ -217,6 +200,20 @@ def attach_file_to_doc(doctype, docname, file_url):
             file_doc = frappe.get_doc("File", file_name)
             file_doc.attached_to_doctype = doctype
             file_doc.attached_to_name = docname
+            file_doc.attached_to_field = "custom_drug_license"
             file_doc.save(ignore_permissions=True)
     except Exception:
         frappe.log_error(frappe.get_traceback(), _("File Attachment Error"))
+
+
+@frappe.whitelist(allow_guest=True)
+def get_supplier_groups():
+    """Fetch and return list of Supplier Groups using SQL (for guest access)"""
+    rows = frappe.db.sql("SELECT `name` FROM `tabSupplier Group` ORDER BY `name`", as_list=True)
+    return [r[0] for r in rows]
+
+@frappe.whitelist(allow_guest=True)
+def get_banks():
+    """Fetch and return list of Banks using SQL (for guest access)"""
+    rows = frappe.db.sql("SELECT `name` FROM `tabBank` ORDER BY `name`", as_list=True)
+    return [r[0] for r in rows]
