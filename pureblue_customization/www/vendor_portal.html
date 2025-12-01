@@ -360,23 +360,23 @@
               const $sel = $('#supplier_group');
               $sel.empty();
               if (r.message && r.message.length) {
-                // support both array of strings or array of { value, label } objects
-                r.message.forEach(function(item) {
-                  if (typeof item === 'string') {
-                    $sel.append($('<option>').val(item).text(item));
-                  } else if (item && (item.value !== undefined || item.label !== undefined)) {
-                    $sel.append($('<option>').val(item.value || item.label).text(item.label || item.value));
-                  } else {
-                    $sel.append($('<option>').val(item).text(String(item)));
-                  }
-                });
+          // support both array of strings or array of { value, label } objects
+          r.message.forEach(function(item) {
+            if (typeof item === 'string') {
+              $sel.append($('<option>').val(item).text(item));
+            } else if (item && (item.value !== undefined || item.label !== undefined)) {
+              $sel.append($('<option>').val(item.value || item.label).text(item.label || item.value));
+            } else {
+              $sel.append($('<option>').val(item).text(String(item)));
+            }
+          });
               } else {
-                $sel.append($('<option>').val('').text('All Supplier Groups'));
+          $sel.append($('<option>').val('').text('All Supplier Groups'));
               }
             },
             error: function() {
               const $sel = $('#supplier_group');
-              $sel.empty().append($('<option>').val('').text('Failed to load groups'));
+              $sel.empty().append($('<option>').val('').text('All Supplier Groups'));
             }
           });
         });
@@ -394,19 +394,19 @@
         </div>
 
         <div class="col-md-6 mb-3">
-          <label for="tax_id" class="form-label">Tax ID / GSTIN</label>
-          <input type="text" id="tax_id" name="tax_id" class="form-control" placeholder="Enter GSTIN">
+          <label for="tax_id" class="form-label">Tax ID / GSTIN <span class="required-indicator">*</span></label>
+          <input type="text" id="tax_id" name="tax_id" class="form-control" required placeholder="Enter GSTIN" pattern="^[0-9A-Z]{15}$" title="GSTIN must be 15 characters long and can include numbers and uppercase letters only.">
         </div>
       </div>
 
       <div class="row">
         <div class="col-md-6 mb-3">
-          <label for="licence_no" class="form-label">Licence No</label>
+          <label for="licence_no" class="form-label">Licence No<span class="required-indicator">*</span></label>
           <input type="text" id="licence_no" name="licence_no" class="form-control" placeholder="Enter licence number">
         </div>
 
         <div class="col-md-6 mb-3">
-          <label for="licence_expiry" class="form-label">Licence Expiry</label>
+          <label for="licence_expiry" class="form-label">Licence Expiry<span class="required-indicator">*</span></label>
           <input type="date" id="licence_expiry" name="licence_expiry" class="form-control">
         </div>
       </div>
@@ -532,23 +532,23 @@
           <script>
             frappe.ready(function() {
               frappe.call({
-                method: 'pureblue_customization.www.vendor_portal.get_banks', // adjust to your python method path
-                callback: function(r) {
-                  const $sel = $('#bank_name');
-                  $sel.empty();
-                  if (r.message && r.message.length) {
-                    r.message.forEach(function(item) {
-                      $sel.append($('<option>').val(item).text(item));
-                    });
-                  } else {
-                    $sel.append($('<option>').val('').text('No banks available'));
-                  }
-                },
-                error: function() {
-                  const $sel = $('#bank_name');
-                  $sel.empty().append($('<option>').val('').text('Failed to load banks'));
+              method: 'pureblue_customization.www.vendor_portal.get_banks', // adjust to your python method path
+              callback: function(r) {
+                const $sel = $('#bank_name');
+                $sel.empty();
+                if (r.message && r.message.length) {
+                  r.message.forEach(function(item) {
+                    $sel.append($('<option>').val(item).text(item));
+                  });
+                } else {
+                  $sel.append($('<option>').val('HDFC').text('HDFC'));
                 }
-                    });
+              },
+              error: function() {
+                const $sel = $('#bank_name');
+                $sel.empty().append($('<option>').val('HDFC').text('HDFC'));
+              }
+                  });
                 });
           </script>
         </div>
@@ -610,7 +610,56 @@
 </div>
 
 <script>
+  
 frappe.ready(function() {
+  const required_fields = {
+    supplier_name: "Supplier Name is required",
+    email: "Email is required",
+    licence_no: "Licence Number is required",
+    licence_expiry: "Licence Expiry Date is required",
+    document_file: "Drug License Document is required",
+
+};
+
+function validateRequiredFields() {
+    let valid = true;
+    let firstErrorField = null;
+
+    for (let field in required_fields) {
+        let input = $('#' + field);
+        if (!input.val() || input.val().trim() === "") {
+            valid = false;
+
+            // Show error message
+            frappe.msgprint(required_fields[field]);
+
+            // Highlight field
+            input.addClass('is-invalid');
+
+            if (!firstErrorField) firstErrorField = input;
+        } else {
+            input.removeClass('is-invalid');
+        }
+    }
+
+    if (firstErrorField) {
+        firstErrorField.focus();
+    }
+
+    return valid;
+}
+
+// Submit handler
+$('#vendor-form').on('submit', function (e) {
+    e.preventDefault();
+
+    // Validate mandatory fields
+    if (!validateRequiredFields()) return;
+
+    // Proceed with your existing submit logic...
+});
+
+  
   // IFSC code to uppercase
   $('#ifsc_code').on('input', function() {
     this.value = this.value.toUpperCase();
@@ -734,12 +783,58 @@ frappe.ready(function() {
       } else {
         msgDiv.removeClass('d-none alert-success').addClass('alert-danger');
         let errorMsg = 'Server error. Please try again.';
+        
         try {
           const errorResponse = JSON.parse(xhr.responseText);
-          if (errorResponse.exc || errorResponse._server_messages) {
-            errorMsg = errorResponse.exc || errorResponse._server_messages;
+          
+          // Extract user-friendly error message from various possible formats
+          if (errorResponse.exception) {
+            // Extract the actual error message after the exception type
+            const exceptionMatch = errorResponse.exception.match(/:\s*(.+)$/);
+            if (exceptionMatch) {
+              errorMsg = exceptionMatch[1].trim();
+            }
+          } else if (errorResponse._server_messages) {
+            // Parse server messages which might be JSON stringified
+            try {
+              const messages = JSON.parse(errorResponse._server_messages);
+              if (Array.isArray(messages) && messages.length > 0) {
+                const parsedMsg = JSON.parse(messages[0]);
+                errorMsg = parsedMsg.message || parsedMsg;
+              }
+            } catch (e) {
+              errorMsg = errorResponse._server_messages;
+            }
+          } else if (errorResponse.exc) {
+            // Parse the exc field which contains the traceback array
+            try {
+              const excArray = JSON.parse(errorResponse.exc);
+              if (Array.isArray(excArray) && excArray.length > 0) {
+                // Extract the last line which usually contains the actual error
+                const excString = excArray[excArray.length - 1];
+                const errorMatch = excString.match(/([A-Za-z]+Error|ValidationError):\s*(.+)$/m);
+                if (errorMatch) {
+                  errorMsg = errorMatch[2].trim();
+                }
+              }
+            } catch (e) {
+              // If parsing fails, try to extract directly from string
+              const errorMatch = errorResponse.exc.match(/([A-Za-z]+Error|ValidationError):\s*(.+?)(?:\\n|$)/);
+              if (errorMatch) {
+                errorMsg = errorMatch[2].trim();
+              }
+            }
+          } else if (errorResponse.message) {
+            errorMsg = errorResponse.message;
           }
-        } catch (e) {}
+          
+          // Clean up the error message
+          errorMsg = errorMsg.replace(/\\n/g, ' ').replace(/\s+/g, ' ').trim();
+          
+        } catch (e) {
+          console.error('Error parsing error response:', e);
+        }
+        
         msgDiv.html(`
           <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10"></circle>
@@ -750,22 +845,6 @@ frappe.ready(function() {
         `);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
-    };
-    
-    xhr.onerror = function() {
-      submitBtn.removeClass('btn-loading').prop('disabled', false);
-      cancelBtn.prop('disabled', false);
-      let msgDiv = $('#response-message');
-      msgDiv.removeClass('d-none alert-success').addClass('alert-danger');
-      msgDiv.html(`
-        <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="12" y1="8" x2="12" y2="12"></line>
-          <line x1="12" y1="16" x2="12.01" y2="16"></line>
-        </svg>
-        <span>Network error. Please check your connection and try again.</span>
-      `);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     };
     
     xhr.send(formData);

@@ -46,6 +46,7 @@ def create_supplier(data):
             "supplier_name": data["supplier_name"],
             "supplier_group": data.get("supplier_group") or "All Supplier Groups",
             "supplier_type": data.get("supplier_type") or "Company",
+            "gstin": data.get("tax_id"),
             "tax_id": data.get("tax_id"),
             "website": data.get("website"),
             "custom_licence_no": data.get("licence_no"),
@@ -77,7 +78,7 @@ def create_supplier(data):
         }
 
     except Exception:
-        frappe.log_error(frappe.get_traceback(), "Supplier Registration Error")
+        frappe.log_error(message=frappe.get_traceback(), title=f"{data.get('supplier_name')} Supplier Registration Error")
         frappe.throw(_("An error occurred while registering. Please try again or contact support."))
 
 
@@ -88,6 +89,10 @@ def create_address(supplier_name, address_data):
         return
 
     try:
+        state = (address_data.get("state") or "").strip()
+        if state:
+            state = state[0].upper() + state[1:]
+
         address = frappe.get_doc({
             "doctype": "Address",
             "address_title": supplier_name,
@@ -95,12 +100,12 @@ def create_address(supplier_name, address_data):
             "address_line1": address_data.get("address_line1"),
             "address_line2": address_data.get("address_line2"),
             "city": address_data.get("city"),
-            "state": address_data.get("state"),
+            "state": state,
             "pincode": address_data.get("pincode"),
             "country": address_data.get("country") or "India",
             "links": [{
-                "link_doctype": "Supplier",
-                "link_name": supplier_name
+            "link_doctype": "Supplier",
+            "link_name": supplier_name
             }]
         })
         address.insert(ignore_permissions=True)
