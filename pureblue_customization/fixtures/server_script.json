@@ -1,0 +1,40 @@
+[
+ {
+  "allow_guest": 0,
+  "api_method": null,
+  "cron_format": null,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Server Script",
+  "doctype_event": "Before Insert",
+  "enable_rate_limit": 0,
+  "event_frequency": "Daily",
+  "modified": "2025-12-05 10:46:47.015453",
+  "module": "Pureblue Customization",
+  "name": "Is License Expiry Ticket",
+  "rate_limit_count": 5,
+  "rate_limit_seconds": 86400,
+  "reference_doctype": null,
+  "script": "expired_customers = frappe.get_all(\r\n    \"Customer\",\r\n    filters={\"custom_license_expiry\": [\"<\", today()]},\r\n    fields=[\"name\"])\r\nfrappe.log_error(title=\"Expired Customers\",message=expired_customers)\r\nfor cust in expired_customers:\r\n    doc = frappe.get_doc(\"Customer\", cust.name)\r\n    if not doc.custom_is_license_expired:\r\n        doc.custom_is_license_expired = 1\r\n        doc.save(ignore_permissions=True)",
+  "script_type": "Scheduler Event"
+ },
+ {
+  "allow_guest": 0,
+  "api_method": null,
+  "cron_format": null,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Server Script",
+  "doctype_event": "Before Insert",
+  "enable_rate_limit": 0,
+  "event_frequency": "All",
+  "modified": "2025-12-05 10:46:37.574307",
+  "module": "Pureblue Customization",
+  "name": "Sales Order not to create if license expired",
+  "rate_limit_count": 5,
+  "rate_limit_seconds": 86400,
+  "reference_doctype": "Sales Order",
+  "script": "customer = frappe.db.get_value(\"Customer\", doc.customer, \"custom_is_license_expired\")\r\n\r\nif customer:\r\n    frappe.throw(\"Cannot create Sales Order: Customer license is expired.\")",
+  "script_type": "DocType Event"
+ }
+]
