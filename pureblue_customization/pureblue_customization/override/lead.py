@@ -122,48 +122,73 @@ def send_brochure_email(doc_name, doctype_name):
                     line-height: 1.6;
                     margin-bottom: 20px;
                 }}
-                .portfolio-grid {{
-                    display: flex;
-                    gap: 10px;
-                    flex-wrap: wrap;
+                /* Table styles for portfolio */
+                .portfolio-table {{
+                    width: 100%;
+                    border-collapse: collapse;
                     margin-bottom: 20px;
+                    background-color: white;
+                    border: 1px solid #dee2e6;
                 }}
-                .portfolio-column {{
-                    flex: 1 1 30%;
-                    min-width: 150px;
-                }}
-                .portfolio-column h3 {{
-                    color: #083278;
+                .portfolio-table th {{
+                    background-color: white;
+                    color: #0d3c7d;
+                    padding: 15px;
+                    text-align: left;
                     font-size: 14px;
-                    margin-bottom: 8px;
+                    font-weight: 700;
+                    border-bottom: 2px solid #dee2e6;
+                    border-right: 1px solid #dee2e6;
                 }}
-                .portfolio-column p {{
-                    color: #666;
-                    font-size: 12px;
+                .portfolio-table th:last-child {{
+                    border-right: none;
+                }}
+                .portfolio-table td {{
+                    padding: 15px;
+                    color: #333;
+                    font-size: 13px;
                     line-height: 1.6;
+                    border-right: 1px solid #dee2e6;
+                    background-color: white;
                 }}
+                .portfolio-table td:last-child {{
+                    border-right: none;
+                }}
+                
+                /* Table styles for comparison */
                 .comparison-section {{
                     margin-top: 25px;
                 }}
-                .comparison-grid {{
-                    display: flex;
-                    gap: 15px;
-                    flex-wrap: wrap;
+                .comparison-table {{
+                    width: 100%;
+                    border-collapse: collapse;
                     margin-bottom: 15px;
+                    background-color: white;
+                    border: 1px solid #dee2e6;
                 }}
-                .comparison-item {{
-                    flex: 1 1 30%;
-                    min-width: 150px;
+                .comparison-table td {{
+                    padding: 15px;
+                    color: #333;
+                    font-size: 13px;
+                    line-height: 1.6;
+                    border-right: 1px solid #dee2e6;
+                    border-bottom: 1px solid #dee2e6;
+                    vertical-align: top;
+                    background-color: white;
+                    width: 33.33%;
                 }}
-                .comparison-item h3 {{
-                    color: #083278;
-                    font-size: 14px;
+                .comparison-table td strong {{
+                    display: block;
+                    color: #0d3c7d;
+                    font-weight: 700;
                     margin-bottom: 8px;
+                    font-size: 14px;
                 }}
-                .comparison-item p {{
-                    color: #666;
-                    font-size: 12px;
-                    line-height: 1.5;
+                .comparison-table td:last-child {{
+                    border-right: none;
+                }}
+                .comparison-table tr:last-child td {{
+                    border-bottom: none;
                 }}
                 .tagline {{
                     color: #666;
@@ -257,52 +282,58 @@ def send_brochure_email(doc_name, doctype_name):
                     </p>
 
                     <h2>Product Portfolio (Highlights)</h2>
-                    <div class="portfolio-grid">
-                        <div class="portfolio-column">
-                            <h3>Common IV Fluids</h3>
-                            <p>NS • DNS • RL • Dextrose • Mannitol • D10 • D25</p>
-                        </div>
-                        <div class="portfolio-column">
-                            <h3>Infusions</h3>
-                            <p>Paracetamol • Metronidazole • Ciprofloxacin • Levofloxacin</p>
-                        </div>
-                        <div class="portfolio-column">
-                            <h3>Pack Types</h3>
-                            <p>MediPort • SlimPort • FFS</p>
-                        </div>
-                    </div>
+                    <table class="portfolio-table">
+                        <thead>
+                            <tr>
+                                <th>Common IV Fluids</th>
+                                <th>Infusions</th>
+                                <th>Pack Types</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>NS • DNS • RL • Dextrose • Mannitol • D10 • D25</td>
+                                <td>Paracetamol • Metronidazole • Ciprofloxacin • Levofloxacin</td>
+                                <td>MediPort • SlimPort • FFS</td>
+                            </tr>
+                        </tbody>
+                    </table>
 
                     <div class="comparison-section">
                         <h2>Why ISBM Is Better Than FFS</h2>
-                        <div class="comparison-grid">
-                            <div class="comparison-item">
-                                <h3>Superior Material</h3>
-                                <p>High grade PET/PP with lower leachables than FFS film.</p>
-                            </div>
-                            <div class="comparison-item">
-                                <h3>High Transparency</h3>
-                                <p>Crystal clear bottles allow easy visual inspection.</p>
-                            </div>
-                            <div class="comparison-item">
-                                <h3>Stronger & Rigid</h3>
-                                <p>Better transport durability & handling strength.</p>
-                            </div>
-                        </div>
-                        <div class="comparison-grid">
-                            <div class="comparison-item">
-                                <h3>Precision Ports</h3>
-                                <p>SlimPort / MediPort ensure consistent sealing.</p>
-                            </div>
-                            <div class="comparison-item">
-                                <h3>Better Sterilisation</h3>
-                                <p>Stable at 121°C vs FFS films which may deform.</p>
-                            </div>
-                            <div class="comparison-item">
-                                <h3>Hospital Preferred</h3>
-                                <p>Better appearance, safety & reliability.</p>
-                            </div>
-                        </div>
-                        <p class="tagline"><strong>ISBM = safer, stronger, clearer and more reliable than FFS.</strong></p>
+                        <table class="comparison-table">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <strong>Superior Material</strong>
+                                        High clarity PET/PP with lower leachables than FFS film.
+                                    </td>
+                                    <td>
+                                        <strong>High Transparency</strong>
+                                        Crystal clear bottles allow easy visual inspection.
+                                    </td>
+                                    <td>
+                                        <strong>Stronger & Rigid</strong>
+                                        Better transport durability & handling strength.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Precision Ports</strong>
+                                        SlimPort / MediPort ensure consistent sealing.
+                                    </td>
+                                    <td>
+                                        <strong>Better Sterilisation</strong>
+                                        Stable at 121°C vs FFS films which may deform.
+                                    </td>
+                                    <td>
+                                        <strong>Hospital Preferred</strong>
+                                        Better appearance, safety & reliability.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    <p class="tagline"><strong>ISBM = safer, stronger, clearer and more reliable than FFS.</strong></p>
                     </div>
 
                     <div class="button-container">
