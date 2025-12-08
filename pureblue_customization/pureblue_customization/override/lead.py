@@ -97,10 +97,12 @@ def send_brochure_email(doc_name, doctype_name):
                     color: white;
                     font-size: 22px;
                     margin-bottom: 5px;
+                    margin-left:10px
                 }}
                 .header-content p {{
                     color: white;
                     font-size: 12px;
+                    margin-left:10px!important
                 }}
                 .content {{
                     padding: 25px 30px;
