@@ -1,7 +1,7 @@
 frappe.ui.form.on('Lead', {
 	refresh(frm) {
 		// your code here
-		frm.page.add_button("Create Visit", () => {
+		frm.add_custom_button("Create Visit", () => {
             console.log("Create Visit button clicked");
                let dialog = new frappe.ui.Dialog({
                 title: "Assign Employee",
