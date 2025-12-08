@@ -9,13 +9,13 @@
   "doctype_event": "Before Insert",
   "enable_rate_limit": 0,
   "event_frequency": "Daily",
-  "modified": "2025-12-05 10:46:47.015453",
+  "modified": "2025-12-08 12:13:21.215877",
   "module": "Pureblue Customization",
   "name": "Is License Expiry Ticket",
   "rate_limit_count": 5,
   "rate_limit_seconds": 86400,
   "reference_doctype": null,
-  "script": "expired_customers = frappe.get_all(\r\n    \"Customer\",\r\n    filters={\"custom_license_expiry\": [\"<\", today()]},\r\n    fields=[\"name\"])\r\nfrappe.log_error(title=\"Expired Customers\",message=expired_customers)\r\nfor cust in expired_customers:\r\n    doc = frappe.get_doc(\"Customer\", cust.name)\r\n    if not doc.custom_is_license_expired:\r\n        doc.custom_is_license_expired = 1\r\n        doc.save(ignore_permissions=True)",
+  "script": "expired_customers = frappe.db.sql(\"\"\"\r\n    SELECT name\r\n    FROM `tabCustomer`\r\n    WHERE custom_license_expiry_date IS NOT NULL\r\n      AND custom_license_expiry_date <= CURDATE()\r\n\"\"\", as_dict=True)\r\nfor cust in expired_customers:\r\n    doc = frappe.get_doc(\"Customer\", cust.name)\r\n    if not doc.custom_is_license_expired:\r\n        doc.custom_is_license_expired = 1\r\n        doc.save(ignore_permissions=True)",
   "script_type": "Scheduler Event"
  },
  {

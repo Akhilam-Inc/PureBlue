@@ -244,5 +244,6 @@ doctype_js = {"Lead" : "custom_scripts/lead.js"}
 # }
 
 fixtures = [
-	{"dt":"Server Script","filters":[["module","in",("Pureblue Customization")]]}
+	{"dt":"Server Script","filters":[["module","in",("Pureblue Customization")]]},
+    {"dt":"Custom Field","filters":[["module","in",("Pureblue Customization")]]},
 ]
