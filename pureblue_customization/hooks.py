@@ -43,7 +43,10 @@ app_license = "mit"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-doctype_js = {"Lead" : "custom_scripts/lead.js"}
+doctype_js = {
+    "Lead" : "custom_scripts/lead.js",
+    "Sales Order":"custom_scripts/sales_order.js"
+}
 
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -141,6 +144,9 @@ doctype_js = {"Lead" : "custom_scripts/lead.js"}
 doc_events = {
 	"ToDo": {
 		"validate": "pureblue_customization.pureblue_customization.override.todo.validate"
+	},
+    "Sales Order":{
+        "validate":"pureblue_customization.pureblue_customization.override.sales_order.validate"
 	}
 }
 
