@@ -3,12 +3,13 @@ from frappe.utils import today
 
 def validate(doc, method):
 
+    # only when status CHANGED to Closed
     if doc.status == "Closed" and doc.has_value_changed("status"):
 
-        # ---- CHECK-IN VALIDATION ----
+        # employee check-in logic
         employee = frappe.db.get_value("Employee", {"user_id": frappe.session.user}, "name")
         if not employee:
-            return  # Skip if no employee mapping
+            return
 
         last_log = frappe.db.get_value(
             "Employee Checkin",
@@ -20,16 +21,15 @@ def validate(doc, method):
             order_by="time desc"
         )
 
-        # No Check-in today → block closing
         if not last_log:
-            frappe.throw("❗ No Check-In found today.<br>Please Check-In before closing this ToDo.")
+            frappe.throw("❗ No Check-In found today.<br>Please Check-In first before closing this ToDo.")
 
-        # Last log is OUT → block closing
         if last_log == "OUT":
-            frappe.throw("❗ You are already Checked-Out.<br>Please Check-In before closing this ToDo.")
+            frappe.throw("❗ You are already Checked-Out.<br>Please Check-In first before closing this ToDo.")
 
-        # ---- STATUS CHANGED TO CLOSED → SHOW MESSAGE ----
-        frappe.msgprint(
-            "✔ ToDo closed successfully.<br><b>You can Checkout from the app now.</b>",
-            indicator="blue"
-        )
+        # ✔ Show alert instead of msgprint
+        frappe.show_alert({
+            "message": "✔ ToDo closed successfully.<br><b>You can Checkout from the app now.</b>",
+            "indicator": "blue"
+        })
+
