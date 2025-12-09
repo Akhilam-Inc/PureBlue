@@ -32,54 +32,77 @@ def get_columns():
 
 
 def get_data(filters):
-	checkins = frappe.get_all(
-		"Employee Checkin",
-		fields=[
-			"employee", "time", "log_type","employee_name",
-			"log_location", "attendance_image"
-		],
-		filters=build_filters(filters),
-		order_by="employee, time"
-	)
+    # --- 1️⃣ VALIDATE DATE FILTERS ---
+    from_date = filters.get("from_date")
+    to_date = filters.get("to_date")
 
-	data = []
-	last_in = {}
-	
-	for c in checkins:
+    if not from_date or not to_date:
+        frappe.throw("Please select both <b>From Date</b> and <b>To Date</b>.")
 
-		# IN Punch
-		if c.log_type == "IN":
-			last_in[c.employee] = c
+    if from_date > to_date:
+        frappe.throw("<b>From Date</b> cannot be greater than <b>To Date</b>.")
 
-		# OUT Punch
-		elif c.log_type == "OUT" and c.employee in last_in:
-			in_log = last_in[c.employee]
+    # --- 2️⃣ CHECK IF CHECKIN RECORDS EXIST ---
+    checkins_exist = frappe.db.exists(
+        "Employee Checkin",
+        {
+            "time": ["between", [from_date + " 00:00:00", to_date + " 23:59:59"]]
+        }
+    )
 
-			duration = None
-			if in_log.time and c.time:
-				duration = c.time - in_log.time
+    if not checkins_exist:
+        frappe.throw("No Employee Checkin records found for the selected date range.")
 
-			# Fetch Activity for that time window
-			activities = get_employee_activities(
-				c.employee,
-				in_log.time,
-				c.time
-			)
+    # --- 3️⃣ FETCH CHECKINS ---
+    checkins = frappe.get_all(
+        "Employee Checkin",
+        fields=[
+            "employee", "time", "log_type", "employee_name",
+            "log_location", "attendance_image"
+        ],
+        filters=build_filters(filters),
+        order_by="employee, time"
+    )
 
-			# If no activity, add blank activity row
-			if not activities:
-				data.append(base_row(in_log, c, duration))
+    data = []
+    last_in = {}
 
-			else:
-				# Add a row for each activity
-				for act in activities:
-					row = base_row(in_log, c, duration)
-					row.update(act)
-					data.append(row)
+    for c in checkins:
 
-			del last_in[c.employee]
+        # IN punch
+        if c.log_type == "IN":
+            last_in[c.employee] = c
 
-	return data
+        # OUT punch
+        elif c.log_type == "OUT" and c.employee in last_in:
+
+            in_log = last_in[c.employee]
+
+            duration = None
+            if in_log.time and c.time:
+                duration = c.time - in_log.time
+
+            # Fetch activities within the time window
+            activities = get_employee_activities(
+                c.employee,
+                in_log.time,
+                c.time
+            )
+
+            # No activity → blank row
+            if not activities:
+                data.append(base_row(in_log, c, duration))
+            else:
+                for act in activities:
+                    row = base_row(in_log, c, duration)
+                    row.update(act)
+                    data.append(row)
+
+            # Clear IN log
+            del last_in[c.employee]
+
+    return data
+
 
 
 def base_row(in_log, out_log, duration):
