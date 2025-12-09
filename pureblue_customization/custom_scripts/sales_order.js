@@ -1,11 +1,11 @@
 frappe.ui.form.on("Sales Order", {
     refresh(frm) {
-        if (!frm.doc.customer) return;
+        if (!frm.doc.customer || frm.doc.docstatus >=1) return;
 
         frappe.db.get_doc("Customer", frm.doc.customer).then(cust => {
-            let license_attachment = cust.custom_drug_license_;
+            let license_attachment = cust.custom_drug_license;
             let license_no = cust.custom_license_no;
-            let license_expiry = cust.custom_license_expiry;
+            let license_expiry = cust.custom_license_expiry_date;
 
             // If any field missing → Show dialog
             if (!license_attachment || !license_no || !license_expiry) {
@@ -19,7 +19,7 @@ frappe.ui.form.on("Sales Order", {
                         {
                             fieldtype: "Attach",
                             label: "Drug License Attachment",
-                            fieldname: "custom_drug_license_",
+                            fieldname: "custom_drug_license",
                             reqd:1
                         },
                         {
@@ -31,7 +31,7 @@ frappe.ui.form.on("Sales Order", {
                         {
                             fieldtype: "Date",
                             label: "License Expiry Date",
-                            fieldname: "custom_license_expiry",
+                            fieldname: "custom_license_expiry_date",
                             reqd:1
                         }
                     ],
@@ -43,9 +43,9 @@ frappe.ui.form.on("Sales Order", {
                                 doctype: "Customer",
                                 name: cust.name,
                                 fieldname: {
-                                    custom_drug_license_: values.custom_drug_license_,
+                                    custom_drug_license_: values.custom_drug_license,
                                     custom_license_no: values.custom_license_no,
-                                    custom_license_expiry: values.custom_license_expiry,
+                                    custom_license_expiry: values.custom_license_expiry_date,
                                 }
                             },
                             callback() {
