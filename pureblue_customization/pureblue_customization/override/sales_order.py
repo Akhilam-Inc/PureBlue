@@ -25,28 +25,33 @@ def validate(self,method):
 
     # If something missing → Block save
     if missing:
+        missing_list = "<br>".join([f"• {item}" for item in missing])
         message = (
-            "Customer <b>{0}</b> has incomplete or expired license information:<br><br>"
-            "<ul>{1}</ul>"
-            "<br>Please update the customer's license details before saving."
-        ).format(
-            self.customer,
-            "".join([f"<li>{m}</li>" for m in missing])
+            f"Customer <b>{self.customer}</b> has incomplete or expired license information:<br>"
+            f"{missing_list}<br>"
+            f"Please update the customer's license details before saving."
         )
 
         frappe.throw(message, title="License Validation Error")
 
 
-def before_validate(self,method):
-    # Skip validation for system managers
-    if frappe.session.user in frappe.permissions.get_roles(frappe.session.user):
-        if "System Manager" in frappe.permissions.get_roles(frappe.session.user):
-            return
-    
+def before_validate(self, method):
+
     user = frappe.session.user
+
+    # 1️⃣ Check if user is linked to Employee
     employee = frappe.db.get_value("Employee", {"user_id": user}, "name")
     if not employee:
-        return  # Skip if no employee mapping
+        return
+
+    sales_person = frappe.db.get_value(
+        "Sales Person",
+        {"employee": employee},
+        "name"
+    )
+
+    if not sales_person:
+        return
 
     last_log = frappe.db.get_value(
         "Employee Checkin",
@@ -59,7 +64,8 @@ def before_validate(self,method):
     )
 
     if not last_log:
-        frappe.throw("❗ No Check-In found today.<br>Please Check-In before creating this Sales Order.")
+        frappe.throw("No check-in found today. Please check in before creating a Sales Order.")
 
     if last_log == "OUT":
-        frappe.throw("❗ You are already Checked-Out.<br>Please Check-In before creating this Sales Order.")
+        frappe.throw("You are already checked out. Please check in before creating a Sales Order.")
+

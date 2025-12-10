@@ -45,7 +45,9 @@ app_license = "mit"
 # include js in doctype views
 doctype_js = {
     "Lead" : "custom_scripts/lead.js",
-    "Sales Order":"custom_scripts/sales_order.js"
+    "Sales Order":"custom_scripts/sales_order.js",
+    "Contact":"custom_scripts/contact.js",
+    "Batch":"custom_scripts/batch.js"
 }
 
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
@@ -157,23 +159,23 @@ doc_events = {
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"pureblue_customization.tasks.all"
-# 	],
-# 	"daily": [
-# 		"pureblue_customization.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"pureblue_customization.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"pureblue_customization.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"pureblue_customization.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+	# "all": [
+	# 	"pureblue_customization.tasks.all"
+	# ],
+	"daily": [
+		"pureblue_customization.pureblue_customization.override.utils.send_alerts_for_pending_coas"
+	],
+	# "hourly": [
+	# 	"pureblue_customization.tasks.hourly"
+	# ],
+	# "weekly": [
+	# 	"pureblue_customization.tasks.weekly"
+	# ],
+	# "monthly": [
+	# 	"pureblue_customization.tasks.monthly"
+	# ],
+}
 
 # Testing
 # -------

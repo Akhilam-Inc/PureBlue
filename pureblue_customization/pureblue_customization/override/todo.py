@@ -22,14 +22,10 @@ def validate(doc, method):
 
         # No Check-in today → block closing
         if not last_log:
-            frappe.throw("❗ No Check-In found today.<br>Please Check-In before closing this ToDo.")
+            frappe.throw("❗No Check-In found today.<br>Please Check-In before closing this ToDo.")
 
         # Last log is OUT → block closing
         if last_log == "OUT":
-            frappe.throw("❗ You are already Checked-Out.<br>Please Check-In before closing this ToDo.")
+            frappe.throw("❗You are already Checked-Out.<br>Please Check-In before closing this ToDo.")
 
-        # ---- STATUS CHANGED TO CLOSED → SHOW MESSAGE ----
-        frappe.msgprint(
-            "✔ ToDo closed successfully.<br><b>You can Checkout from the app now.</b>",
-            indicator="blue"
-        )
+        frappe.response["message"] = "✔ ToDo closed successfully. You can checkout from the app now."
