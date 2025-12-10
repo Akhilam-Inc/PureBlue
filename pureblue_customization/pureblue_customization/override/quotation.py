@@ -1,16 +1,23 @@
 import frappe
 from frappe.utils import today
 
-def before_validate(self,method):
-    # Skip validation for system managers
-    if frappe.session.user in frappe.permissions.get_roles(frappe.session.user):
-        if "System Manager" in frappe.permissions.get_roles(frappe.session.user):
-            return
-    
+def before_validate(self, method):
+
     user = frappe.session.user
+
+    # 1️⃣ Check if user is linked to Employee
     employee = frappe.db.get_value("Employee", {"user_id": user}, "name")
     if not employee:
-        return  # Skip if no employee mapping
+        return
+
+    sales_person = frappe.db.get_value(
+        "Sales Person",
+        {"employee": employee},
+        "name"
+    )
+
+    if not sales_person:
+        return
 
     last_log = frappe.db.get_value(
         "Employee Checkin",
@@ -23,7 +30,7 @@ def before_validate(self,method):
     )
 
     if not last_log:
-        frappe.throw("❗ No Check-In found today.<br>Please Check-In before creating this Quotation.")
+        frappe.throw("No check-in found today. Please check in before creating a Quotation.")
 
     if last_log == "OUT":
-        frappe.throw("❗ You are already Checked-Out.<br>Please Check-In before creating this Quotation.")
+        frappe.throw("You are already checked out. Please check in before creating a Quotation.")

@@ -4,21 +4,21 @@ frappe.ui.form.on('Lead', {
 		frm.add_custom_button("Create Visit", () => {
             console.log("Create Visit button clicked");
                let dialog = new frappe.ui.Dialog({
-                title: "Assign Employee",
+                title: "Assign Employee for Visit",
                 fields: [
                     {
-                        fieldname: "employee",
-                        label: "Employee",
+                        fieldname: "sales_person",
+                        label: "Sales Person",
                         fieldtype: "Link",
-                        options: "Employee",
+                        options: "Sales Person",
                         reqd: 1,
-                        get_query() {
-                            return {
-                                filters: {
-                                    designation: "Field Sales"
-                                }
-                            };
-                        }
+                        // get_query() {
+                        //     return {
+                        //         filters: {
+                        //             employee: ""
+                        //         }
+                        //     };
+                        // }
                     },
                     {
                         fieldname: "assign_date",
@@ -31,14 +31,14 @@ frappe.ui.form.on('Lead', {
                 primary_action_label: "Submit",
                 primary_action(values) {
                     frappe.msgprint(`
-                        <b>Employee:</b> ${values.employee}<br>
+                        <b>Sales Person:</b> ${values.sales_person}<br>
                         <b>Date:</b> ${values.assign_date}
                     `);
                     frappe.call({
                         method: "pureblue_customization.pureblue_customization.override.lead.create_todo",  
                         args: {
                             lead_name: frm.doc.name,   
-                            employee: values.employee,
+                            sales_person: values.sales_person,
                             assign_date: values.assign_date
                             
                         },

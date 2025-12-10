@@ -1,50 +1,18 @@
 import frappe
 from frappe import _
 
-@frappe.whitelist()
-def create_todo(lead_name,sales_person,assign_date):
-    lead = frappe.get_doc("Lead", lead_name)
-    SP =frappe.get_doc("Sales Person", sales_person)
-    employee = SP.employee
-    frappe.msgprint(f"employee {employee}")
-    user = frappe.db.get_value("Employee", employee, "user_id")
-    if not employee:
-        frappe.throw("Please select an Employee.")
-
-    # frappe.msgprint(f"Creating ToDo for lead: {lead.lead_name}")
-    if not user:
-        frappe.throw("Selected employee does not have a linked User.")
-    else:
-        Description = (
-        f"Visit {lead.name} \n"
-        f"Email: {lead.email_id}\n"
-        f"Phone: {lead.mobile_no}\n"
-        f"Industry: {lead.industry}"
-        )
-        todo = frappe.get_doc({
-        "doctype": "ToDo",
-        "description": Description,
-        "reference_type": "Lead",
-        "reference_name": lead.name,
-        "allocated_to": user,
-        "assigned_by": frappe.session.user
-    })
-    todo.insert()
-    frappe.msgprint(f"ToDo created for {lead.name}")
-    return todo.name
-
 
 @frappe.whitelist()
-def send_brochure_email(doc_name, doctype_name):
+def send_brochure_email(doc_name, doctype_name,email_to):
     """Send brochure email to customer with fixed logo and responsive layout"""
     try:
         doc = frappe.get_doc(doctype_name, doc_name)
-        recipient_email = doc.email_id or doc.email or doc.contact_email
+        recipient_email = email_to
 
         if not recipient_email:
             frappe.throw(_("Email address not found for this contact"))
 
-        customer_name = doc.lead_name or "Sir/Madam"
+        customer_name = doc.name or "Sir/Madam"
         doc.db_set("custom_brochure_sent", True)
         customer_registration_url = frappe.utils.get_url("/customer_registration")
 
