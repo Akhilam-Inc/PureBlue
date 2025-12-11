@@ -4,9 +4,9 @@ from frappe import _
 @frappe.whitelist()
 def create_todo(lead_name,sales_person,assign_date):
     lead = frappe.get_doc("Lead", lead_name)
-    SP =frappe.get_doc("Sales Person", sales_person)
-    employee = SP.employee
-    frappe.msgprint(f"employee {employee}")
+    sp = frappe.db.get_value("Sales Person",sales_person,["employee", "name"],as_dict=True)    
+    employee = sp.employee
+    # frappe.msgprint(f"employee {employee}")
     user = frappe.db.get_value("Employee", employee, "user_id")
     if not employee:
         frappe.throw("Please select an Employee.")
@@ -30,7 +30,7 @@ def create_todo(lead_name,sales_person,assign_date):
         "assigned_by": frappe.session.user
     })
     todo.insert()
-    frappe.msgprint(f"ToDo created for {lead.name}")
+    frappe.msgprint(f"ToDo has been assigned to {sp.name}.")
     return todo.name
 
 

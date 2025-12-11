@@ -12,13 +12,13 @@ frappe.ui.form.on('Lead', {
                         fieldtype: "Link",
                         options: "Sales Person",
                         reqd: 1,
-                        get_query() {
+                       get_query() {
                             return {
                                 filters: {
-                                    "is_group": 0
+                                    name: ["!=", "Sales Team"]   // Remove ONLY Sales Team
                                 }
                             };
-                        }
+			            }
                     },
                     {
                         fieldname: "assign_date",
@@ -30,10 +30,10 @@ frappe.ui.form.on('Lead', {
                 ],
                 primary_action_label: "Submit",
                 primary_action(values) {
-                    frappe.msgprint(`
-                        <b>Sales Person:</b> ${values.sales_person}<br>
-                        <b>Date:</b> ${values.assign_date}
-                    `);
+                    // frappe.msgprint(`
+                    //     <b>Sales Person:</b> ${values.sales_person}<br>
+                    //     <b>Date:</b> ${values.assign_date}
+                    // `);
                     frappe.call({
                         method: "pureblue_customization.pureblue_customization.override.lead.create_todo",  
                         args: {
@@ -43,7 +43,7 @@ frappe.ui.form.on('Lead', {
                             
                         },
                         callback: function(response) {
-                            frappe.msgprint("Visit created successfully.");
+                            // frappe.msgprint("Visit created successfully.");
                         },
                     })
 
