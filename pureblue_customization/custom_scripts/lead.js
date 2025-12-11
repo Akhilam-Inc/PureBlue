@@ -12,13 +12,13 @@ frappe.ui.form.on('Lead', {
                         fieldtype: "Link",
                         options: "Sales Person",
                         reqd: 1,
-                        // get_query() {
-                        //     return {
-                        //         filters: {
-                        //             employee: ""
-                        //         }
-                        //     };
-                        // }
+                        get_query() {
+                            return {
+                                filters: {
+                                    "is_group": 0
+                                }
+                            };
+                        }
                     },
                     {
                         fieldname: "assign_date",
@@ -48,8 +48,25 @@ frappe.ui.form.on('Lead', {
                     })
 
                     dialog.hide();
+    
+                    frappe.call({
+                        method: "frappe.client.set_value",
+                        args: {
+                            doctype: "Lead",
+                            name: cur_frm.doc.name,
+                            fieldname: "custom_assigned_to_person",
+                            value: values.sales_person
+                        },
+                        callback: function() {
+                            cur_frm.reload_doc();
+                        }
+                    });
+
+                    d.hide();
                 }
             });
+
+            
 
             dialog.show();
         });
