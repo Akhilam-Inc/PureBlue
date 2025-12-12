@@ -13,6 +13,7 @@ def get_columns():
     return [
         {"label": "Sales Person", "fieldname": "sales_person", "fieldtype": "Data", "width": 180},
         {"label": "Total Assigned Lead", "fieldname": "total_assigned", "fieldtype": "Int", "width": 150},
+        {"label": "Pending Lead", "fieldname": "open_lead", "fieldtype": "Int", "width": 150},
         {"label": "Visited Lead", "fieldname": "visited_lead", "fieldtype": "Int", "width": 150},
         {"label": "Converted Lead", "fieldname": "converted_lead", "fieldtype": "Int", "width": 150},
         {"label": "Lost Lead", "fieldname": "lost_lead", "fieldtype": "Int", "width": 150},
@@ -24,7 +25,7 @@ def get_columns():
 def get_data(filters):
     sales_person = filters.get("sales_person")
 
-    conditions = ""
+    conditions = "WHERE custom_assigned_to_person IS NOT NULL AND custom_assigned_to_person != ''"
     values = {}
 
     # Apply sales person filter only if selected
@@ -36,6 +37,9 @@ def get_data(filters):
         SELECT
             custom_assigned_to_person AS sales_person,
             COUNT(name) AS total_assigned,
+
+             -- Count status = Open
+            SUM(CASE WHEN status = 'Open' THEN 1 ELSE 0 END) AS open_lead,
 
             -- Count status = Visited
             SUM(CASE WHEN status = 'Visited' THEN 1 ELSE 0 END) AS visited_lead,
