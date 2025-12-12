@@ -30,7 +30,7 @@ def create_todo(lead_name,sales_person,assign_date):
         "assigned_by": frappe.session.user
     })
     todo.insert()
-    frappe.msgprint(f"ToDo has been assigned to {sp.name}.")
+    frappe.msgprint(f"Visit has been assigned to {sp.name}.")
     return todo.name
 
 

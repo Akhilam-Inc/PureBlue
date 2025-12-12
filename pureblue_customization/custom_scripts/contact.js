@@ -42,7 +42,7 @@ frappe.ui.form.on('Contact', {
                 __("Send brochure email to <b>{0}</b>?", [only_email]),
                 function () {
                     frappe.call({
-                        method: "pureblue_customization.pureblue_customization.override.lead.send_brochure_email",
+                        method: "pureblue_customization.pureblue_customization.override.contact.send_brochure_email",
                         args: {
                             doc_name: frm.doc.name,
                             doctype_name: frm.doctype,

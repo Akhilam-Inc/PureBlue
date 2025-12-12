@@ -1,5 +1,10 @@
 frappe.ui.form.on('Lead', {
 	refresh(frm) {
+        // Remove button first to avoid duplicates on refresh
+        frm.remove_custom_button("Create Visit");
+
+        // Show button only if NOT assigned
+        if (!frm.doc.custom_assigned_to_person) {
 		// your code here
 		frm.add_custom_button("Create Visit", () => {
             console.log("Create Visit button clicked");
@@ -70,6 +75,7 @@ frappe.ui.form.on('Lead', {
 
             dialog.show();
         });
+    }
 
         if(!frm.doc.custom_brochure_sent){
             frm.add_custom_button("Send Brochure",function(){
