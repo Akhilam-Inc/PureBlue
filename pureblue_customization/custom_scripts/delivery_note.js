@@ -53,7 +53,7 @@ frappe.ui.form.on("Delivery Note", {
 						args: {
 							reference_doctype: frm.doctype,
 							reference_name: frm.doc.name,
-							contact_email:frm.doc.contact_email || "vivek.thakor@akhilaminc.com",
+							contact_email:frm.doc.contact_email,
 							customer: frm.doc.customer,
 							mobile_no: frm.doc.mobile_no,
                             against_sales_orders: against_sales_orders
