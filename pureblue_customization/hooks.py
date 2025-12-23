@@ -47,7 +47,8 @@ doctype_js = {
     "Lead" : "custom_scripts/lead.js",
     "Sales Order":"custom_scripts/sales_order.js",
     "Contact":"custom_scripts/contact.js",
-    "Batch":"custom_scripts/batch.js"
+    "Batch":"custom_scripts/batch.js",
+    "Delivery Note":"custom_scripts/delivery_note.js"
 }
 
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
@@ -176,6 +177,11 @@ scheduler_events = {
 	# "monthly": [
 	# 	"pureblue_customization.tasks.monthly"
 	# ],
+    # "cron": {
+    #     "0 22 * * *": [
+    #         "pureblue_customization.pureblue_customization.doctype.sales_person_trip.sales_person_trip.generate_sales_person_trips"
+    #     ]
+    # }
 }
 
 # Testing
