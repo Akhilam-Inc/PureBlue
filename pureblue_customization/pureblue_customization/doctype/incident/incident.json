@@ -1,0 +1,217 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:[naming_series]",
+ "creation": "2025-12-26 13:33:36.365103",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_ckub",
+  "column_break_vtdk",
+  "naming_series",
+  "section_break_i3xi",
+  "employee_code",
+  "employee_name",
+  "column_break_icax",
+  "department",
+  "branch",
+  "designation",
+  "incident_info_section",
+  "type_of_incident",
+  "date_of_report",
+  "date_of_incident",
+  "location_of_incident",
+  "column_break_xtws",
+  "description",
+  "functional_info",
+  "is_confidential",
+  "parties_involved_section",
+  "employee_detail",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_ckub",
+   "fieldtype": "Section Break",
+   "hidden": 1
+  },
+  {
+   "fieldname": "column_break_vtdk",
+   "fieldtype": "Column Break",
+   "hidden": 1
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series"
+  },
+  {
+   "fieldname": "section_break_i3xi",
+   "fieldtype": "Section Break",
+   "label": "Employee Details"
+  },
+  {
+   "fieldname": "employee_code",
+   "fieldtype": "Link",
+   "label": "Employee code",
+   "options": "Employee"
+  },
+  {
+   "fetch_from": "employee_code.employee_name",
+   "fetch_if_empty": 1,
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "label": "Employee Name"
+  },
+  {
+   "fieldname": "column_break_icax",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "employee_code.department",
+   "fieldname": "department",
+   "fieldtype": "Data",
+   "label": "Department"
+  },
+  {
+   "fetch_from": "employee_code.branch",
+   "fieldname": "branch",
+   "fieldtype": "Data",
+   "label": "Branch"
+  },
+  {
+   "fetch_from": "employee_code.designation",
+   "fieldname": "designation",
+   "fieldtype": "Data",
+   "label": "Designation"
+  },
+  {
+   "fieldname": "incident_info_section",
+   "fieldtype": "Section Break",
+   "label": "Incident Info"
+  },
+  {
+   "fieldname": "type_of_incident",
+   "fieldtype": "Select",
+   "label": "Type of incident",
+   "options": "Urgent Action needed\nAction Needed\nRequires Attention\nNo Action Needed"
+  },
+  {
+   "default": "Today",
+   "fieldname": "date_of_report",
+   "fieldtype": "Date",
+   "label": "Date of Report"
+  },
+  {
+   "fieldname": "date_of_incident",
+   "fieldtype": "Date",
+   "label": "Date of Incident"
+  },
+  {
+   "fieldname": "location_of_incident",
+   "fieldtype": "Small Text",
+   "label": "location",
+   "max_height": "100px"
+  },
+  {
+   "fieldname": "column_break_xtws",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text",
+   "label": "Description",
+   "max_height": "100px"
+  },
+  {
+   "fieldname": "functional_info",
+   "fieldtype": "Text",
+   "label": "Functional Info",
+   "max_height": "100px"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_confidential",
+   "fieldtype": "Check",
+   "label": "Is Confidential "
+  },
+  {
+   "fieldname": "parties_involved_section",
+   "fieldtype": "Section Break",
+   "label": "Parties Involved"
+  },
+  {
+   "fieldname": "employee_detail",
+   "fieldtype": "Table",
+   "label": "Employee Detail",
+   "options": "Employee Detail"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Incident",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-12-26 18:02:47.271251",
+ "modified_by": "Administrator",
+ "module": "Pureblue Customization",
+ "name": "Incident",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Employee",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

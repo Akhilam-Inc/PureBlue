@@ -124,9 +124,9 @@ doctype_js = {
 # -----------
 # Permissions evaluated in scripted ways
 
-# permission_query_conditions = {
-# 	"Event": "frappe.desk.doctype.event.event.get_permission_query_conditions",
-# }
+permission_query_conditions = {
+	"Incident": "pureblue_customization.pureblue_customization.doctype.incident.incident.get_permission_query_conditions_for_incident",
+}
 #
 # has_permission = {
 # 	"Event": "frappe.desk.doctype.event.event.has_permission",
