@@ -1,0 +1,65 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-12-26 13:33:19.341659",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "detail_section",
+  "employee_name",
+  "department",
+  "branch",
+  "designation"
+ ],
+ "fields": [
+  {
+   "fieldname": "detail_section",
+   "fieldtype": "Section Break",
+   "label": "Detail"
+  },
+  {
+   "fieldname": "employee_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Employee name",
+   "options": "Employee"
+  },
+  {
+   "fetch_from": "employee_name.department",
+   "fieldname": "department",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Department"
+  },
+  {
+   "fetch_from": "employee_name.branch",
+   "fieldname": "branch",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Branch"
+  },
+  {
+   "fetch_from": "employee_name.designation",
+   "fieldname": "designation",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Designation"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-12-26 18:02:02.349234",
+ "modified_by": "Administrator",
+ "module": "Pureblue Customization",
+ "name": "Employee Detail",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
