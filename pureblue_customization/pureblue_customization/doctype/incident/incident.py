@@ -8,22 +8,18 @@ from frappe.model.document import Document
 class Incident(Document):
 	pass
 
-
 @frappe.whitelist()
 def get_permission_query_conditions_for_incident(user):
-	# System Manager → no restriction
-	# if "System Manager" in frappe.get_roles(user):
-	# 	return None
-
 	roles = frappe.get_roles(user)
 
-	conditions = []
+	# Full access users
+	if "Incident Admin" in roles:
+		return None
 
-	# HR users can see only non-confidential records
+	# HR users → non-confidential only
 	if "HR User" in roles or "HR Manager" in roles:
-		conditions.append("`tabIncident`.is_confidential = 0")
-
-	if conditions:
-		return " AND ".join(conditions)
+		return "`tabIncident`.is_confidential = 0"
 
 	return None
+
+
