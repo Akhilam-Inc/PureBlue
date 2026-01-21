@@ -10,7 +10,8 @@
   "employee_name",
   "department",
   "branch",
-  "designation"
+  "designation",
+  "involved_person"
  ],
  "fields": [
   {
@@ -45,13 +46,20 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Designation"
+  },
+  {
+   "fieldname": "involved_person",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Involved Person",
+   "options": "\nWitness\nParty"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-12-26 18:02:02.349234",
+ "modified": "2026-01-19 12:56:44.221180",
  "modified_by": "Administrator",
  "module": "Pureblue Customization",
  "name": "Employee Detail",
