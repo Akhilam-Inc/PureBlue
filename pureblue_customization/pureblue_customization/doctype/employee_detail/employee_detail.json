@@ -44,15 +44,16 @@
   {
    "fieldname": "involved_person",
    "fieldtype": "Select",
+   "in_list_view": 1,
    "label": "Involved Person",
-   "options": "\nWitness\nParty",
-   "permlevel": 1
+   "options": "\nWitness\nParty"
   },
   {
    "fieldname": "mobile",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Contact",
+   "options": "Phone",
    "reqd": 1
   },
   {
@@ -66,7 +67,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-01-22 13:23:37.467503",
+ "modified": "2026-01-23 18:55:14.800300",
  "modified_by": "Administrator",
  "module": "Pureblue Customization",
  "name": "Employee Detail",
