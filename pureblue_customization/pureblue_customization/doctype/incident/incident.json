@@ -20,10 +20,11 @@
   "location_of_incident",
   "column_break_xtws",
   "description",
-  "functional_info",
-  "is_confidential",
+  "before_incident",
+  "after_incident",
   "parties_involved_section",
   "employee_detail",
+  "is_confidential",
   "amended_from",
   "is_from_web_form"
  ],
@@ -64,10 +65,11 @@
    "options": "Urgent Action needed\nAction Needed\nRequires Attention\nNo Action Needed"
   },
   {
-   "default": "Today",
+   "default": "Now",
    "fieldname": "date_of_report",
-   "fieldtype": "Date",
-   "label": "Date of Report"
+   "fieldtype": "Datetime",
+   "label": "Date of Report",
+   "read_only": 1
   },
   {
    "fieldname": "date_of_incident",
@@ -86,14 +88,8 @@
   },
   {
    "fieldname": "description",
-   "fieldtype": "Text",
+   "fieldtype": "Small Text",
    "label": "Description",
-   "max_height": "100px"
-  },
-  {
-   "fieldname": "functional_info",
-   "fieldtype": "Text",
-   "label": "Functional Info",
    "max_height": "100px"
   },
   {
@@ -140,13 +136,25 @@
    "fieldtype": "Check",
    "hidden": 1,
    "label": "Is From Web Form"
+  },
+  {
+   "fieldname": "before_incident",
+   "fieldtype": "Small Text",
+   "label": "Before Incident",
+   "max_height": "100px"
+  },
+  {
+   "fieldname": "after_incident",
+   "fieldtype": "Small Text",
+   "label": "After Incident",
+   "max_height": "100px"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-01-22 12:56:06.918779",
+ "modified": "2026-01-23 18:38:37.145378",
  "modified_by": "Administrator",
  "module": "Pureblue Customization",
  "name": "Incident",
