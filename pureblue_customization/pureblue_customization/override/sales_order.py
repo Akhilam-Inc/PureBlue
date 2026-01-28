@@ -36,6 +36,8 @@ def validate(self,method):
         )
 
         frappe.throw(message, title="License Validation Error")
+    
+    low_stock_warning(self)
 
 
 def on_submit(self, method):
@@ -92,3 +94,36 @@ def before_validate(self, method):
     if last_log == "OUT":
         frappe.throw("You are already checked out. Please check in before creating a Sales Order.")
 
+
+def low_stock_warning(doc):
+    messages = []
+
+    for item in doc.items:
+        if not item.item_code or not item.warehouse:
+            continue
+
+        actual_qty = frappe.db.get_value(
+            "Bin",
+            {
+                "item_code": item.item_code,
+                "warehouse": item.warehouse
+            },
+            "actual_qty"
+        ) or 0
+
+        if item.qty > actual_qty:
+            messages.append(
+                f"""
+                Item Code: {item.item_code}<br>
+                Required Quantity: {item.qty}<br>
+                Available Quantity: {actual_qty}<br>
+                Warehouse: {item.warehouse}
+                """
+            )
+
+    if messages:
+        frappe.throw(
+            "The following items do not have sufficient stock to fulfill this Sales Order:<br><br>"
+            + "<br><br>".join(messages),
+            title="Insufficient Stock"
+        )
