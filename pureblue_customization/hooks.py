@@ -153,7 +153,7 @@ doc_events = {
         "validate":[
 			"pureblue_customization.pureblue_customization.override.sales_order.validate"
 		],
-        "on_submit":"pureblue_customization.pureblue_customization.override.sales_order.on_submit"
+        # "on_submit":"pureblue_customization.pureblue_customization.override.sales_order.on_submit"
 	},
     "Quotation":{
         "before_validate":"pureblue_customization.pureblue_customization.override.quotation.before_validate"
