@@ -13,7 +13,7 @@ frappe.ui.form.on("Delivery Note", {
             add_mark_delivered_button(frm);
         }
         if(frm.doc.workflow_state==="Delivered"){
-            frm.clear_custom_buttons();
+            // frm.clear_custom_buttons();
         }
     },
 	before_workflow_action: async function (frm) {
@@ -164,7 +164,7 @@ function hide_actions(frm) {
 
 function add_mark_delivered_button(frm) {
 
-    frm.clear_custom_buttons();
+    // frm.clear_custom_buttons();
 
     frm.add_custom_button(__("Mark Delivered"), function () {
         open_delivery_otp_dialog(frm);
@@ -182,4 +182,5 @@ function add_mark_delivered_button(frm) {
         );
     }
 }
+
 
