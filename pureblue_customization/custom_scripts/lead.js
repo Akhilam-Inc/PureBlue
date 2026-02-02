@@ -77,11 +77,9 @@ frappe.ui.form.on('Lead', {
         });
     }
 
-        if(!frm.doc.custom_brochure_sent){
-            frm.add_custom_button("Send Brochure",function(){
-                frm.trigger("send_brochure_btn")
-            })
-        }
+        frm.add_custom_button("Send Brochure",function(){
+            frm.trigger("send_brochure_btn")
+        })
         
 	},
 
