@@ -2,14 +2,14 @@ frappe.ui.form.on("Delivery Note", {
 	refresh(frm) {
 		// your code here
         if(frm.doc.workflow_state==="Out for Delivery"){
-            hide_actions(frm);
+            // hide_actions(frm);
             add_mark_delivered_button(frm);
         }
 		
 	},
     onload_post_render: function (frm) {
         if (frm.doc.workflow_state === "Out for Delivery") {
-            hide_actions(frm);
+            // hide_actions(frm);
             add_mark_delivered_button(frm);
         }
         if(frm.doc.workflow_state==="Delivered"){
@@ -182,3 +182,4 @@ function add_mark_delivered_button(frm) {
         );
     }
 }
+
