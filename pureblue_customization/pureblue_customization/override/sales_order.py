@@ -126,4 +126,3 @@ def low_stock_warning(doc):
             "The following items do not have sufficient stock to fulfill this Sales Order:<br><br>"
             + "<br><br>".join(messages),
             title="Insufficient Stock"
-        )

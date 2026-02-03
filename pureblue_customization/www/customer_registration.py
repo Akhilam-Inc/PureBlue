@@ -66,7 +66,7 @@ def create_customer(data):
             "tax_id": data.get("tax_id"),
             "website": data.get("website"),
             "custom_licence_no": data.get("licence_no"),
-            "custom_licence_expiry": frappe.utils.getdate(data.get("licence_expiry"))
+            "custom_license_expiry_date": frappe.utils.getdate(data.get("licence_expiry"))
         })
 
         customer.insert(ignore_permissions=True)
@@ -98,7 +98,7 @@ def create_customer(data):
         file_url = save_uploaded_file(file)
         if file_url:
             attach_file_to_doc("Customer", customer.name, file_url)
-            frappe.db.set_value("Customer", customer.name, "custom_drug_license_", file_url)
+            frappe.db.set_value("Customer", customer.name, "custom_drug_license", file_url)
 
         frappe.db.commit()
 
@@ -415,7 +415,7 @@ def attach_file_to_doc(doctype, docname, file_url):
             file_doc = frappe.get_doc("File", file_name)
             file_doc.attached_to_doctype = doctype
             file_doc.attached_to_name = docname
-            file_doc.attached_to_field = "custom_drug_license_"
+            file_doc.attached_to_field = "custom_drug_license"
             file_doc.save(ignore_permissions=True)
     except Exception:
         frappe.log_error(frappe.get_traceback(), _("File Attachment Error"))
