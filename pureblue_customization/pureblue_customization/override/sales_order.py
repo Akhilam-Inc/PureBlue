@@ -64,10 +64,15 @@ def before_validate(self, method):
 
     user = frappe.session.user
 
+    if "Sales Manager" in frappe.get_roles(user):
+        return
+
     # 1️⃣ Check if user is linked to Employee
     employee = frappe.db.get_value("Employee", {"user_id": user}, "name")
     if not employee:
         return
+    
+   
 
     sales_person = frappe.db.get_value(
         "Sales Person",
